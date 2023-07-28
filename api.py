@@ -4,6 +4,17 @@ import requests
 
 
 class Datastore:
+    
+    def get_clinician_stats(self, username):
+        
+        base_url = "https://api.infrasolutions.au/api/get_clinician_stats?username={}"
+        url = base_url.format(username)
+        print("API URL:", url)  # Add this line to check the formed URL
+        response = requests.get(url)
+        json_response = response.json()
+        print("API Response:", json_response)  # Add this line to see the API response
+        return json_response
+    
     def get_usernames(self):
         response = requests.get("https://api.infrasolutions.au/api/get_usernames")
         json_respnose = response.json()
@@ -65,5 +76,8 @@ class Datastore:
             username, name, password, profession
         )
         response = requests.post(url)
+        print("API URL:", url)  # Add this line to check the formed URL
+        response = requests.get(url)
+        json_response = response.json()
+        print("API Response:", json_response)  # Add this line to see the API response
         return response
-        

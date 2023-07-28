@@ -28,6 +28,18 @@ class MainWindow:
         self.ui.pushButton.clicked.connect(self.login)  # Connects the clicked signal of pushButton to login function
         # Clinician Home Page
         self.ui.pushButton_6.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_17))
+        self.ui.pushButton_3.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_8))
+        self.ui.pushButton_2.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_7))
+        self.ui.pushButton_4.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_9))
+        self.ui.pushButton_5.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_11))
+        # Add Staff
+        self.ui.pushButton_9.clicked.connect(self.add_staff)
+        # Add Patient
+        self.ui.pushButton_16.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        self.ui.pushButton_10.clicked.connect(self.add_patient)
+        # Clinician Stats
+        self.ui.pushButton_017.clicked.connect(self.get_clinician_stats)
+        self.ui.pushButton_17.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         
         # ----- slots ----- #
 
@@ -47,6 +59,42 @@ class MainWindow:
         else:
             self.ui.lineEdit.setText("Username not registered")
             
+    def add_staff(self):
+        # Retrieve staff details from the input fields
+        name = self.ui.lineEdit_3.text()
+        username = self.ui.lineEdit_5.text()
+        password = self.ui.lineEdit_6.text()
+        profession = self.ui.lineEdit_4.text()
+        try:
+            self.db.add_staff(name, username, password, profession)
+            self.ui.pushButton_9.setText("Success")
+        except:
+            self.ui.pushButton_9.setText("Error")
+            print("Error")
+        
+    def add_patient(self):
+        first_name = self.ui.lineEdit_7.text()
+        last_name = self.ui.lineEdit_8.text()
+        email = self.ui.lineEdit_9.text()
+        gender = self.ui.lineEdit_10.text()
+        address = self.ui.lineEdit_11.text()
+        suburb = self.ui.lineEdit_12.text()
+        phone = self.ui.lineEdit_13.text()
+        try:
+            self.db.add_patient(first_name, last_name, email, gender, address, suburb, phone)
+            self.ui.pushButton_10.setText("Success")
+        except:
+            self.ui.pushButton_10.setText("Error")
+            print("Error")
+            
+    def get_clinician_stats(self):
+        username = self.ui.lineEdit_14.text()
+        stats = self.db.get_clinician_stats(username)
+        for record in stats['results']:
+            item = f"{record['Patient_data.first_name || Patient_data.last_name']} - {record['date']}"
+            self.ui.comboBox_1.addItem(item)
+
+
             
     def show(self):
         # Show the main window
