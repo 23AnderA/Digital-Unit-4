@@ -33,6 +33,15 @@ class Datastore:
         json_response = response.json()
         print("API Response:", json_response)
         return json_response
+    
+    def get_exercise_regime(self, patient_id):
+        url = "https://api.infrasolutions.au/api/get_exercise_regime?patient_id={}".format(patient_id)
+        print("API URL:", url)
+        response = requests.get(url)
+        print(response.text)
+        json_response = response.json()
+        print("API Response:", json_response)
+        return json_response
 
 
     def add_patient(self, first_name, last_name, email, gender, address, suburb, phone):

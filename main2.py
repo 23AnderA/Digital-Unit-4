@@ -28,7 +28,7 @@ class MainWindow:
         # Login Page
         self.ui.pushButton.clicked.connect(self.login)  # Connects the clicked signal of pushButton to login function
         # Clinician Home Page
-        self.ui.pushButton_6.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_17))
+        self.ui.pushButton_6.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_11_1))
         self.ui.pushButton_3.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_8))
         self.ui.pushButton_2.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_7))
         self.ui.pushButton_4.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_9))
@@ -48,6 +48,9 @@ class MainWindow:
         # Get Assessments
         self.ui.pushButton_136.clicked.connect(self.get_assessments)
         self.ui.pushButton_22.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        # Get Exercise Regime
+        self.ui.pushButton_136_1.clicked.connect(self.get_exercise_regime)
+        self.ui.pushButton_22_1.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         
         # ----- slots ----- #
 
@@ -142,6 +145,25 @@ class MainWindow:
             results_string += "-" * 50 + "\n"
         
         self.ui.textEdit_1.setText(results_string)
+
+    def get_exercise_regime(self):
+        patient_id = self.ui.lineEdit_161_1.text()
+        results = self.db.get_exercise_regime(patient_id)
+
+        formatted_text = ""
+        for exercise in results['results']:
+            name = exercise['name']
+            date = exercise['date']
+            reps = exercise['reps']
+            body_location = exercise['body_location']
+            target_muscles = exercise['target_muscles']
+            equipment_required = exercise['equipment_required']
+            animated_image = exercise['animated_image']
+            
+            exercise_text = f"Exercise: {name}\nDate: {date}\nReps: {reps}\nBody Location: {body_location}\nTarget Muscles: {target_muscles}\nEquipment Required: {equipment_required}\nAnimated Image: {animated_image}\n\n"
+            formatted_text += exercise_text
+
+        self.ui.textEdit_1_1.setText(formatted_text)
 
 
 
