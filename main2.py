@@ -4,6 +4,7 @@ from ui_RTR import Ui_MainWindow  # Importing the UI class from ui_RTR module
 from api import Datastore  # Importing the Datastore class from the datastore module
 from PyQt6.QtGui import QPixmap  # Importing QPixmap from PyQt6.QtGui for working with images
 import re  # Importing the re module for regular expression operations
+import json
 
 class num_exercises:
     num_exercises = 0  # Class variable to keep track of the number of exercises
@@ -40,6 +41,13 @@ class MainWindow:
         # Clinician Stats
         self.ui.pushButton_017.clicked.connect(self.get_clinician_stats)
         self.ui.pushButton_17.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        # Appointment Assessments
+        self.ui.pushButton_11.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_64))
+        # OT Assessments
+        self.ui.pushButton_84.clicked.connect(self.add_OT_assessment)
+        # Get Assessments
+        self.ui.pushButton_136.clicked.connect(self.get_assessments)
+        self.ui.pushButton_22.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         
         # ----- slots ----- #
 
@@ -93,6 +101,49 @@ class MainWindow:
         for record in stats['results']:
             item = f"{record['Patient_data.first_name || Patient_data.last_name']} - {record['date']}"
             self.ui.comboBox_1.addItem(item)
+            
+    def add_OT_assessment(self):
+        clinician = self.ui.lineEdit_95_1.text()
+        patient_id = self.ui.lineEdit_95.text()
+        appointment_date = self.ui.lineEdit_96.text()
+        shoulder_abductors_score = self.ui.spinBox_28.value()
+        elbow_flexors_score = self.ui.spinBox_29.value()
+        elbow_extensors_score = self.ui.spinBox_30.value()
+        wrist_extensors_score = self.ui.spinBox_31.value()
+        finger_flexors_score = self.ui.spinBox_32.value()
+        hand_intrinsics_score = self.ui.spinBox_33.value()
+        print(patient_id, appointment_date)
+        
+        self.db.add_assessments(clinician, patient_id, appointment_date, shoulder_abductors_score, elbow_flexors_score, elbow_extensors_score, wrist_extensors_score, finger_flexors_score, hand_intrinsics_score)
+        # Set the success message for the button
+        self.ui.pushButton_84.setText("Success")
+
+    def get_assessments(self):
+        patient_first_name = self.ui.lineEdit_161.text()
+        patient_last_name = self.ui.lineEdit_162.text()
+
+        results = self.db.get_assessments(patient_first_name, patient_last_name)
+        
+        # Initialize an empty string to build the user-friendly result
+        results_string = ""
+        
+        # Loop through each result in the results list
+        for result in results['results']:
+            results_string += "Date: " + result['date'] + "\n"
+            
+            # Loop through each key and value in the result dictionary except the 'date'
+            for key, value in result.items():
+                if key != 'date':
+                    # Convert None values to a human-readable string
+                    value_str = str(value) if value is not None else 'Not Available'
+                    results_string += f"{key.replace('_', ' ').title()}: {value_str}\n"
+            
+            # Add a separator line between each result
+            results_string += "-" * 50 + "\n"
+        
+        self.ui.textEdit_1.setText(results_string)
+
+
 
 
             
