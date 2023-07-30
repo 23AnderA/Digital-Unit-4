@@ -30,6 +30,7 @@ class MainWindow:
 
         # Login Page
         self.ui.pushButton.clicked.connect(self.login)  # Connects the clicked signal of pushButton to login function
+        self.ui.pushButton_01.clicked.connect(self.Admin_login)
         # Clinician Home Page
         self.ui.pushButton_6.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_11_1))
         self.ui.pushButton_3.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_8))
@@ -38,12 +39,13 @@ class MainWindow:
         self.ui.pushButton_5.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_11))
         # Add Staff
         self.ui.pushButton_9.clicked.connect(self.add_staff)
+        self.ui.pushButton_15.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         # Add Patient
         self.ui.pushButton_16.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         self.ui.pushButton_10.clicked.connect(self.add_patient)
         # Clinician Stats
         self.ui.pushButton_017.clicked.connect(self.get_clinician_stats)
-        self.ui.pushButton_17.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        self.ui.pushButton_17.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_5))
         # Appointment Assessments
         self.ui.pushButton_11.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_64))
         # OT Assessments
@@ -55,6 +57,9 @@ class MainWindow:
         # Get Exercise Regime
         self.ui.pushButton_136_1.clicked.connect(self.get_exercise_regime)
         self.ui.pushButton_22_1.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        # Admin Home Page
+        self.ui.pushButton_8.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_6))
+        self.ui.pushButton_7.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_8))
         
         # ----- slots ----- #
 
@@ -69,6 +74,22 @@ class MainWindow:
             if password_value == password:
                 # Set the current page to page_4
                 self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4)
+            else:
+                self.ui.lineEdit_2.setText("Incorrect Password")
+        else:
+            self.ui.lineEdit.setText("Username not registered")
+            
+    def Admin_login(self):
+        username = self.ui.lineEdit.text()
+        password = self.ui.lineEdit_2.text()
+        
+        stored_password = self.db.get_password(username)
+        password_value = stored_password['results'][0]['password']
+        
+        if stored_password is not None:
+            if password_value == password:
+                # Set the current page to page_4
+                self.ui.MainWindow_2.setCurrentWidget(self.ui.page_5)
             else:
                 self.ui.lineEdit_2.setText("Incorrect Password")
         else:
