@@ -5,6 +5,9 @@ from api import Datastore  # Importing the Datastore class from the datastore mo
 from PyQt6.QtGui import QPixmap  # Importing QPixmap from PyQt6.QtGui for working with images
 import re  # Importing the re module for regular expression operations
 import json
+import matplotlib.pyplot as plt
+from datetime import datetime
+import numpy as np
 
 class num_exercises:
     num_exercises = 0  # Class variable to keep track of the number of exercises
@@ -47,6 +50,7 @@ class MainWindow:
         self.ui.pushButton_84.clicked.connect(self.add_OT_assessment)
         # Get Assessments
         self.ui.pushButton_136.clicked.connect(self.get_assessments)
+        self.ui.pushButton_136_2.clicked.connect(self.get_and_plot_scores)
         self.ui.pushButton_22.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         # Get Exercise Regime
         self.ui.pushButton_136_1.clicked.connect(self.get_exercise_regime)
@@ -165,6 +169,45 @@ class MainWindow:
 
         self.ui.textEdit_1_1.setText(formatted_text)
 
+    def plot_exercise_scores(self, results, exercise):
+        dates = []
+        scores = []
+
+        for result in results['results']:
+            date_str = result['date']
+            score = result[exercise]
+            
+            if score is not None:
+                score = int(score)
+                date = datetime.strptime(date_str, '%d/%m/%Y')
+                
+                dates.append(date)
+                scores.append(score)
+
+        # Convert dates to numerical format for regression
+        dates_num = [d.timestamp() for d in dates]
+
+        # Fit a linear regression model
+        m, b = np.polyfit(dates_num, scores, 1)
+
+        # Create the line of best fit using the regression coefficients
+        best_fit_line = [m * date + b for date in dates_num]
+
+        plt.scatter(dates, scores)
+        plt.plot(dates, best_fit_line, color='red')  # Plotting the line of best fit
+        plt.xlabel('Date')
+        plt.ylabel(f'{exercise.replace("_", " ").capitalize()} Score')
+        plt.title(f'{exercise.replace("_", " ").capitalize()} Score over Time')
+        plt.ylim(0, 5)  # Setting the y-axis range to go up to 5
+        plt.xticks(rotation=45)
+        plt.show()
+        
+    def get_and_plot_scores(self):
+        patient_first_name = self.ui.lineEdit_161.text()
+        patient_last_name = self.ui.lineEdit_162.text()
+        results = self.db.get_assessments(patient_first_name, patient_last_name)
+        exercise = self.ui.lineEdit_161_2.text()
+        self.plot_exercise_scores(results, exercise)
 
 
 
