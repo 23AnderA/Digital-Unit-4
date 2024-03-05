@@ -1,0 +1,70 @@
+BEGIN caesar_encrypt
+    INPUT text
+    VAR shift = 3
+    VAR encrypted = ""
+    VAR shifted_value = 0
+    
+    FOR count = 0 TO LENGTH OF text - 1
+        VAR char = text[count]
+        
+        IF char IS ALPHA THEN
+            CALCULATE shifted_value = ASCII OF char + shift
+            IF char IS LOWERCASE THEN
+                IF shifted_value > ASCII OF 'z' THEN
+                    CALCULATE shifted_value = shifted_value - 26
+                ENDIF
+            ELSE
+                IF shifted_value > ASCII OF 'Z' THEN
+                    CALCULATE shifted_value = shifted_value - 26
+                ENDIF
+            ENDIF
+            encrypted = encrypted + CHAR OF shifted_value
+        ELSE
+            encrypted = encrypted + char
+        ENDIF
+    NEXT count
+    
+    OUTPUT encrypted
+END caesar_encrypt
+
+BEGIN caesar_decrypt
+    INPUT text
+    VAR shift = 3
+    VAR decrypted = ""
+    VAR shifted_value = 0
+    
+    FOR count = 0 TO LENGTH OF text - 1
+        VAR char = text[count]
+        
+        IF char IS ALPHA THEN
+            CALCULATE shifted_value = ASCII OF char - shift
+            IF char IS LOWERCASE THEN
+                IF shifted_value < ASCII OF 'a' THEN
+                    CALCULATE shifted_value = shifted_value + 26
+                ENDIF
+            ELSE
+                IF shifted_value < ASCII OF 'A' THEN
+                    CALCULATE shifted_value = shifted_value + 26
+                ENDIF
+            ENDIF
+            decrypted = decrypted + CHAR OF shifted_value
+        ELSE
+            decrypted = decrypted + char
+        ENDIF
+    NEXT count
+    
+    OUTPUT decrypted
+END caesar_decrypt
+
+BEGIN main
+    DISPLAY "Enter a word or phrase to encrypt: "
+    INPUT plaintext
+    
+    DISPLAY "Original: ", plaintext
+    
+    CALL caesar_encrypt
+    DISPLAY "Encrypted: ", encrypted_text
+    
+    CALL caesar_decrypt
+    DISPLAY "Decrypted: ", decrypted_text
+END main

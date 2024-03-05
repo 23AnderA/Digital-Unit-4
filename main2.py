@@ -39,7 +39,7 @@ class MainWindow:
         self.ui.pushButton_5.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_11))
         # Add Staff
         self.ui.pushButton_9.clicked.connect(self.add_staff)
-        self.ui.pushButton_15.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
+        self.ui.pushButton_15.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_5))
         # Add Patient
         self.ui.pushButton_16.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         self.ui.pushButton_10.clicked.connect(self.add_patient)
@@ -50,6 +50,7 @@ class MainWindow:
         self.ui.pushButton_11.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_64))
         # OT Assessments
         self.ui.pushButton_84.clicked.connect(self.add_OT_assessment)
+        self.ui.pushButton_20.clicked.connect(lambda: self.ui.MainWindow_2.setCurrentWidget(self.ui.page_4))
         # Get Assessments
         self.ui.pushButton_136.clicked.connect(self.get_assessments)
         self.ui.pushButton_136_2.clicked.connect(self.get_and_plot_scores)
@@ -127,7 +128,7 @@ class MainWindow:
         username = self.ui.lineEdit_14.text()
         stats = self.db.get_clinician_stats(username)
         for record in stats['results']:
-            item = f"{record['Patient_data.first_name || Patient_data.last_name']} - {record['date']}"
+            item = f"{record['Full Name']} - {record['date']}"
             self.ui.comboBox_1.addItem(item)
             
     def add_OT_assessment(self):
@@ -200,7 +201,13 @@ class MainWindow:
             
             if score is not None:
                 score = int(score)
-                date = datetime.strptime(date_str, '%d/%m/%Y')
+                try:
+                    date = datetime.strptime(date_str, '%d/%m/%Y')
+                except ValueError:
+                    # Handle the error - maybe log it, use a default date, or skip this iteration
+                    print(f"Failed to parse date: {date_str}")
+                    continue
+
                 
                 dates.append(date)
                 scores.append(score)
